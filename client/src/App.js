@@ -23,22 +23,6 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const pusher = new Pusher(process.env.REACT_APP_PUSHER_TOKEN, {
-      cluster: "ap2",
-    });
-
-    const channel = pusher.subscribe("currentuseremail");
-    channel.bind("inserted", (data) => {
-      setAddedusers([...addedusers, data]);
-    });
-
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [addedusers]);
-
-  useEffect(() => {
     if (user) {
       axios.get("/getactiveusers", apiAuth).then((users) => {
         setUsers(users.data);
@@ -77,7 +61,7 @@ const App = () => {
     }
   }, [user]);
 
-  const addUser = (e, item) => {
+  const addUser = async (item) => {
     axios
       .post(
         "/newuser",
@@ -86,11 +70,20 @@ const App = () => {
           chatuseremail: item.email,
           chatuserimgUrl: item.imgUrl,
           chatusertimestamp: item.timestamp,
-          currentuseremail: auth.currentUser.email,
+          currentuseremail: auth.currentUser?.email,
         },
         apiAuth
       )
       .catch((err) => console.log(err.message));
+
+    const pusher = new Pusher(process.env.REACT_APP_PUSHER_TOKEN, {
+      cluster: "ap2",
+    });
+
+    const channel = pusher.subscribe("chatuseremail");
+    channel.bind("inserted", (data) => {
+      setAddedusers([...addedusers, data]);
+    });
   };
 
   if (!user) return <Login />;
@@ -140,7 +133,7 @@ const App = () => {
                     <button
                       disabled={existState === undefined ? false : true}
                       className="profile_button"
-                      onClick={(e) => addUser(e, item)}
+                      onClick={() => addUser(item)}
                     >
                       {existState === undefined ? (
                         <AiOutlineUserAdd size={17} />

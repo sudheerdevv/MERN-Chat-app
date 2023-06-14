@@ -25,6 +25,7 @@ const Chat = () => {
 
     const channel = pusher.subscribe("message");
     channel.bind("inserted", (data) => {
+      console.log(data);
       setMessages([...messages, data]);
     });
 

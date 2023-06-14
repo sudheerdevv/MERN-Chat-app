@@ -95,7 +95,7 @@
 }
 
 .add_userscontainer {
-  max-height: 30vh;
+  max-height: 37vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -134,7 +134,7 @@
 
 .profile_container {
   width: 100%;
-  padding: 10px 0;
+  padding: 6px 0;
   display: flex;
   justify-content: center;
   align-items: center;
